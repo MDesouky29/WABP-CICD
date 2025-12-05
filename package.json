@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "cypress": "^15.7.0",
+    "cypress-file-upload": "^5.0.8",
+    "cypress-repeat": "^2.3.10"
+  }
+}

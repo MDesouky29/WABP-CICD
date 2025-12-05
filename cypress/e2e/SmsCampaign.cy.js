@@ -1,0 +1,191 @@
+import SmsCampaignPage from '../Pages/SmsCampaignPage';
+import BasePage from '../Pages/BasePage';
+
+
+describe('Sms Campaign tests', () => {
+
+  BasePage.init(SmsCampaignPage, 'SmsCampaign');
+
+
+  it('should login and visit SMS campaign page', function () {
+    cy.log('Already logged in and on SMS Campaign page');
+  });
+
+  it('Should create Onspot campaigns Successfully', function () {
+
+    const data = BasePage.generateSMSCampaignData(this.SmsCampaign)
+
+
+    SmsCampaignPage.AddNewSmsCampaignInfoTab(data.dynamicCampaignName);
+    SmsCampaignPage.ContactsTab(data.dynamicMobileNumber);
+    SmsCampaignPage.TemplateTab(data.randomTemplate);
+
+    cy.wait(3000);
+    cy.get('.mat-simple-snack-bar-content')
+      .should('contain', 'Campaign Created Successfully');
+
+
+  });
+
+  it('Should create Onspot campaigns with custom group Successfully', function () {
+
+    const data = BasePage.generateSMSCampaignData(this.SmsCampaign)
+
+
+    SmsCampaignPage.customGroupCamp(data.dynamicCampaignName, this.SmsCampaign.templateNames[1]);
+
+    cy.get('.mat-simple-snack-bar-content')
+      .should('contain', 'Campaign Created Successfully');
+
+
+  });
+
+  it('Should create Onspot campaigns with Normal group Successfully', function () {
+    const data = BasePage.generateSMSCampaignData(this.SmsCampaign)
+
+
+
+    SmsCampaignPage.normalGroupCamp(data.dynamicCampaignName, this.SmsCampaign.templateNames[1]);
+
+    cy.get('.mat-simple-snack-bar-content', { timeout: 10000 }).should('contain', 'Campaign Created Successfully');
+
+
+
+  });
+
+  it('Should create Scheduled campaigns Successfully', function () {
+
+  const data = BasePage.generateSMSCampaignData(this.SmsCampaign)
+
+      SmsCampaignPage.ScheduleCampaignInfoTab(data.dynamicCampaignName);
+      SmsCampaignPage.ContactsTab(data.dynamicMobileNumber);
+      SmsCampaignPage.TemplateTab(data.randomTemplate);
+
+      cy.wait(3000);
+      cy.get('.mat-simple-snack-bar-content')
+        .should('contain', 'Campaign Created Successfully');
+   
+
+
+
+  });
+  it('Should Search by the Campaign Title Successfully', function () {
+    SmsCampaignPage.openSearch()
+
+    SmsCampaignPage.SearchByCampaignName(this.SmsCampaign.smsCampaigns[0].CampaignName);
+    cy.get('.example-element-row > .cdk-column-title').should('contain', this.SmsCampaign.smsCampaigns[0].CampaignName)
+
+  });
+
+
+
+  it('Should Search by Onspot Sending Type Successfully', function () {
+    SmsCampaignPage.openSearch()
+
+    SmsCampaignPage.SearchBySendingStatus();
+
+    cy.get(':nth-child(1) > .cdk-column-sendingType > .badge-status').should('contain', 'Onspot')
+
+
+  });
+
+  it('Should Search by Sent Sending Status Successfully', function () {
+    SmsCampaignPage.openSearch()
+
+    SmsCampaignPage.SearchBySendingStatus()
+
+    cy.get(':nth-child(1) > .cdk-column-sendingType > .badge-status').should('contain', 'Onspot')
+
+
+  });
+
+  it('Should Search by Scheduled Sending Type Successfully', function () {
+    SmsCampaignPage.openSearch()
+
+    SmsCampaignPage.SearchByScheduledCmapaign()
+
+    cy.get(':nth-child(1) > .cdk-column-sendingType > .badge-status').should('contain', 'Scheduled')
+
+
+  });
+  it('Should Clear data Successfully', function () {
+    SmsCampaignPage.openSearch()
+
+    SmsCampaignPage.Clearbutton()
+
+    cy.get(':nth-child(1) > .cdk-column-sendingType > .badge-status').should('have.value', '');
+
+
+
+  });
+  it('Should Duplicate The Campaign without any changing ', function () {
+    SmsCampaignPage.DuplicateWithoutChanging();
+    cy.wait(500)
+
+    cy.get('.mat-simple-snack-bar-content').should('contain', 'Campaign Created Successfully')
+
+  });
+  it('Should Duplicate the campaign with changing from onspot to schedual', function () {
+    SmsCampaignPage.openSearch()
+    SmsCampaignPage.SearchByOnspotCmapaign();
+    SmsCampaignPage.OnspotToScheduled();
+    cy.get('.mat-simple-snack-bar-content').should('contain', 'Campaign Created Successfully')
+
+
+  });
+
+  it('Should Duplicate the campaign with changing from schedual to onspot ', function () {
+
+    SmsCampaignPage.openSearch()
+
+    SmsCampaignPage.SearchByScheduledCmapaign()
+
+    SmsCampaignPage.ScheduledToOnspot()
+    cy.get('.mat-simple-snack-bar-content').should('contain', 'Campaign Created Successfully')
+
+
+  });
+
+  it('Should Duplicate the campaign with changing from Custom to Normal ', function () {
+    SmsCampaignPage.openSearch()
+
+    SmsCampaignPage.SearchByCampaignName(this.SmsCampaign.CustomOnspot)
+
+    SmsCampaignPage.CustomToNormal(this.SmsCampaign.MobileNumber, this.SmsCampaign.templateNames[1]);
+    cy.wait(500)
+
+    cy.get('.mat-simple-snack-bar-content').should('contain', 'Campaign Created Successfully')
+
+
+  });
+  it('Should Duplicate the campaign with changing from Normal to Custom ', function () {
+    SmsCampaignPage.openSearch()
+
+    SmsCampaignPage.SearchByCampaignName(this.SmsCampaign.NormalSchedual)
+
+    SmsCampaignPage.NormalToCutom()
+    cy.get('.mat-simple-snack-bar-content').should('contain', 'Campaign Created Successfully')
+
+  });
+  it('Should Duplicate the campaign with changing The template ', function () {
+    SmsCampaignPage.openSearch()
+
+    SmsCampaignPage.SearchByCampaignName(this.SmsCampaign.NormalSchedual)
+
+    SmsCampaignPage.DuplicateChangeTemp(this.SmsCampaign.templateNames[2]);
+    cy.get('.mat-simple-snack-bar-content').should('contain', 'Campaign Created Successfully')
+
+
+  });
+  it('View Button Should work correctly', function () {
+    cy.log('Already logged in and on SMS Campaign page');
+    cy.get(':nth-child(1) > .py-2 > .btn-group-actions-list > :nth-child(1) > .btn > .ng-tns-c263-37').click();
+    cy.url().should('include', '/pages/smsCampaigns/report');
+  });
+
+  it('Export Contacts', function () {
+    SmsCampaignPage.ExportSmsCampaign();
+
+  });
+
+});
