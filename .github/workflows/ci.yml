@@ -1,0 +1,47 @@
+@"
+name: CI Pipeline - Cypress Project
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      # 3. Install dependencies
+      - name: Install Dependencies
+        run: npm ci
+
+      # 4. Start your app
+      - name: Start App
+        run: npm start &
+      
+      # 5. Wait for app to be ready (adjust port if needed)
+      - name: Wait for App
+        uses: jakejarvis/wait-action@v0.1.2
+        with:
+          timeout: '60'
+          check: 'http://localhost:3000'
+
+      # 6. Run Cypress tests
+      - name: Run Cypress Tests
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm start
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 60
+"@ | Set-Content -Path ".github\workflows\ci.yml"
